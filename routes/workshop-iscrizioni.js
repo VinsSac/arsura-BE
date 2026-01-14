@@ -1,7 +1,6 @@
 import express from "express";
 import Workshop from "../models/workshop.js";
 import Iscrizione from "../models/workshopIscrizione.js";
-import sendMail from "../services/mail.js";
 
 import ExcelJS from "exceljs";
 
@@ -10,10 +9,14 @@ const router = express.Router();
 /* POST iscrizione */
 router.post("/:workshopId", async (req, res) => {
   const { workshopId } = req.params;
-  const { nome, email, telefono, note } = req.body;
+  const { nome, cognome, email, telefono, indirizzo, citta, note } = req.body;
 
   const workshop = await Workshop.findById(workshopId);
   if (!workshop) return res.status(404).json({ error: "Workshop non trovato" });
+
+  if (!nome || !cognome || !email || !telefono || !indirizzo || !citta) {
+    return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
+  }
 
   const iscrittiCount = await Iscrizione.countDocuments({
     workshop: workshopId,
@@ -25,24 +28,17 @@ router.post("/:workshopId", async (req, res) => {
   const iscrizione = new Iscrizione({
     workshop: workshopId,
     nome,
+    cognome,
     email,
     telefono,
-    note,
+    indirizzo,
+    citta,
   });
 
   await iscrizione.save();
 
   // Email automatica
-  await sendMail({
-    to: process.env.ARSURA_EMAIL,
-    subject: `Nuova iscrizione workshop: ${workshop.titolo}`,
-    text: `
-Nome: ${nome}
-Email: ${email}
-Telefono: ${telefono || "-"}
-Note: ${note || "-"}
-`,
-  });
+  //await sendMail({ nome, cognome, email, telefono, indirizzo, citta });
 
   res.status(201).json({ message: "Iscrizione avvenuta con successo" });
 });

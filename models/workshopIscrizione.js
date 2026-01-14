@@ -9,10 +9,11 @@ const WorkshopIscrizioneSchema = new mongoose.Schema(
     },
 
     nome: { type: String, required: true },
+    cognome: { type: String, required: true },
     email: { type: String, required: true },
-    telefono: String,
-    indirizzo: String,
-    note: String,
+    telefono: { type: String, required: true },
+    indirizzo: { type: String, required: true },
+    citta: { type: String, required: true },
   },
   { timestamps: true }
 );

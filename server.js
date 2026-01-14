@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import workshopRoutes from "./routes/workshops.js";
+import workshopRoutesIscrizione from "./routes/workshop-iscrizioni.js";
+import authRoutes from "./routes/auth.routes.js";
 
 dotenv.config();
 
@@ -15,10 +17,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Se invii form urlencoded (type="application/x-www-form-urlencoded")
+app.use(express.urlencoded({ extended: true }));
+
 // ------------------------
 // ROUTES
 // ------------------------
 app.use("/api/workshops", workshopRoutes);
+app.use("/api/workshops/iscrizioni", workshopRoutesIscrizione);
+app.use("/auth", authRoutes);
 
 // ------------------------
 // MONGODB CONNECTION
